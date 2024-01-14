@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "humanity",
+  "version": "${version}",
+  "name": "Humanity",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/wirelesseye/Humanity"
+  },
+  "license": "MIT",
+  "icon": "assets/humanity/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "my.wirelesseye.humanity.HumanityClient"
+    ],
+    "main": [
+      "my.wirelesseye.humanity.Humanity"
+    ]
+  },
+  "mixins": [
+    "humanity.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
