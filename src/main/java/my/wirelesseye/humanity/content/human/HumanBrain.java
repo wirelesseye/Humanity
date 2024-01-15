@@ -23,13 +23,13 @@ public class HumanBrain {
     }
 
     private static void addCoreActivities(Brain<HumanEntity> brain) {
-
         brain.setTaskList(Activity.CORE, ImmutableList.of(
                 Pair.of(0, new StayAboveWaterTask(0.8f)),
                 Pair.of(0, new WalkTask(0.75f)),
                 Pair.of(0, new OpenDoorsTask()),
                 Pair.of(0, new LookAroundTask(45, 90)),
-                Pair.of(1, new WanderAroundTask())));
+                Pair.of(1, new WanderAroundTask()),
+                Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(0.5f, false, 4))));
     }
 
     private static void addIdleActivities(Brain<HumanEntity> brain) {
