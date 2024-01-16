@@ -77,6 +77,10 @@ public class HumanBrain {
 
     private static Optional<? extends LivingEntity> getAttackTarget(HumanEntity human) {
         Brain<HumanEntity> brain = human.getBrain();
+        var hurtBy = brain.getOptionalMemory(MemoryModuleType.HURT_BY_ENTITY);
+        if (hurtBy.isPresent()) {
+            return hurtBy;
+        }
         return brain.getOptionalMemory(AllMemoryModuleTypes.NEAREST_MONSTERS);
     }
 }
