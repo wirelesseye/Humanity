@@ -1,4 +1,4 @@
-package my.wirelesseye.humanity.content.human;
+package my.wirelesseye.humanity.entity.human;
 
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;

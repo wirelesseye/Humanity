@@ -1,4 +1,4 @@
-package my.wirelesseye.humanity.content.human;
+package my.wirelesseye.humanity.entity.human;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -12,7 +12,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.crash.CrashException;

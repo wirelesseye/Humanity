@@ -1,21 +1,27 @@
-package my.wirelesseye.humanity.content.human;
+package my.wirelesseye.humanity.entity.human;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 import my.wirelesseye.humanity.AllEntityTypes;
+import my.wirelesseye.humanity.entity.ai.AllMemoryModuleTypes;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.ai.brain.Activity;
 import net.minecraft.entity.ai.brain.Brain;
+import net.minecraft.entity.ai.brain.MemoryModuleState;
+import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.*;
+
+import java.util.Optional;
 
 
 public class HumanBrain {
     protected static Brain<HumanEntity> create(Brain<HumanEntity> brain) {
-        addCoreActivities(brain);
-        addIdleActivities(brain);
+        HumanBrain.addCoreActivities(brain);
+        HumanBrain.addIdleActivities(brain);
+        HumanBrain.addFightActivities(brain);
         brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
         brain.setDefaultActivity(Activity.IDLE);
         brain.resetPossibleActivities();
@@ -38,7 +44,16 @@ public class HumanBrain {
                         Pair.of(new FindWalkTargetTask(0.5f), 1),
                         Pair.of(new GoTowardsLookTarget(0.5f, 2), 1),
                         Pair.of(new WaitTask(30, 60), 1)))),
+                Pair.of(2, new UpdateAttackTargetTask<>(HumanBrain::getAttackTarget)),
                 createFreeFollowTask()));
+    }
+
+    private static void addFightActivities(Brain<HumanEntity> brain) {
+        brain.setTaskList(Activity.FIGHT, ImmutableList.of(
+                Pair.of(0, new ForgetAttackTargetTask<>()),
+                Pair.of(0, new MeleeAttackTask(20)),
+                Pair.of(2, new RangedApproachTask(0.75f))
+        ), ImmutableSet.of(Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryModuleState.VALUE_PRESENT)));
     }
 
     private static Pair<Integer, Task<LivingEntity>> createFreeFollowTask() {
@@ -57,6 +72,11 @@ public class HumanBrain {
 
     public static void updateActivities(HumanEntity human) {
         Brain<HumanEntity> brain = human.getBrain();
-        brain.resetPossibleActivities(ImmutableList.of(Activity.IDLE));
+        brain.resetPossibleActivities(ImmutableList.of(Activity.FIGHT, Activity.IDLE));
+    }
+
+    private static Optional<? extends LivingEntity> getAttackTarget(HumanEntity human) {
+        Brain<HumanEntity> brain = human.getBrain();
+        return brain.getOptionalMemory(AllMemoryModuleTypes.NEAREST_MONSTERS);
     }
 }

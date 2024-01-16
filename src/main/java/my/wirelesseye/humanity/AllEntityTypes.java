@@ -1,6 +1,6 @@
 package my.wirelesseye.humanity;
 
-import my.wirelesseye.humanity.content.human.HumanEntity;
+import my.wirelesseye.humanity.entity.human.HumanEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityDimensions;

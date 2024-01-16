@@ -1,6 +1,6 @@
 package my.wirelesseye.humanity;
 
-import my.wirelesseye.humanity.content.human.HumanEntityRenderer;
+import my.wirelesseye.humanity.entity.human.HumanEntityRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;

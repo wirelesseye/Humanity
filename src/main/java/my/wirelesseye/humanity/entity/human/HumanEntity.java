@@ -1,7 +1,9 @@
-package my.wirelesseye.humanity.content.human;
+package my.wirelesseye.humanity.entity.human;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
+import my.wirelesseye.humanity.entity.ai.AllMemoryModuleTypes;
+import my.wirelesseye.humanity.entity.ai.sensor.AllSensorTypes;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.entity.EntityType;
@@ -37,9 +39,12 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
     private static final ImmutableList<MemoryModuleType<?>> MEMORY_MODULES = ImmutableList.of(
             MemoryModuleType.MOBS,
             MemoryModuleType.VISIBLE_MOBS,
+            MemoryModuleType.ATTACK_TARGET,
+            MemoryModuleType.ATTACK_COOLING_DOWN,
             MemoryModuleType.NEAREST_PLAYERS,
             MemoryModuleType.NEAREST_VISIBLE_PLAYER,
-            MemoryModuleType.NEAREST_VISIBLE_WANTED_ITEM,
+            MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER,
+            AllMemoryModuleTypes.NEAREST_MONSTERS,
             MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE,
             MemoryModuleType.WALK_TARGET,
             MemoryModuleType.LOOK_TARGET,
@@ -51,6 +56,7 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
             SensorType.NEAREST_LIVING_ENTITIES,
             SensorType.NEAREST_PLAYERS,
             SensorType.NEAREST_ITEMS,
+            AllSensorTypes.NEAREST_MONSTERS,
             SensorType.HURT_BY);
 
     private final HumanInventory inventory = new HumanInventory(this);
@@ -119,6 +125,7 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
     @Override
     public void tickMovement() {
         this.inventory.updateItems();
+        this.tickHandSwing();
         super.tickMovement();
     }
 
