@@ -11,13 +11,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SlimeEntity.class)
-public abstract class SlimeEntityMixin {
+abstract class SlimeEntityMixin {
     @Shadow protected abstract boolean canAttack();
 
     @Shadow protected abstract void damage(LivingEntity target);
 
     @Inject(method = "pushAwayFrom", at = @At("TAIL"))
-    void injectPushAwayFrom(Entity entity, CallbackInfo ci) {
+    private void injectPushAwayFrom(Entity entity, CallbackInfo ci) {
         if (entity instanceof HumanEntity && this.canAttack()) {
             this.damage((LivingEntity)entity);
         }

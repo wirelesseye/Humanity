@@ -34,7 +34,7 @@ abstract class ActiveTargetGoalMixin extends TrackTargetGoal {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getClosestPlayer(Lnet/minecraft/entity/ai/TargetPredicate;Lnet/minecraft/entity/LivingEntity;DDD)Lnet/minecraft/entity/player/PlayerEntity;"),
             cancellable = true
     )
-    protected void onGetClosestPlayer(CallbackInfo ci) {
+    private void onGetClosestPlayer(CallbackInfo ci) {
         ArrayList<LivingEntity> playersAndHumans = new ArrayList<>();
         World world = this.mob.world;
         playersAndHumans.addAll(world.getPlayers());
