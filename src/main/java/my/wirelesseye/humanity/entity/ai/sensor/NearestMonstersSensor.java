@@ -6,6 +6,7 @@ import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.sensor.NearestVisibleLivingEntitySensor;
 import net.minecraft.entity.mob.Angerable;
 import net.minecraft.entity.mob.Monster;
+import net.minecraft.entity.mob.PiglinEntity;
 
 public class NearestMonstersSensor extends NearestVisibleLivingEntitySensor {
     @Override
@@ -13,6 +14,7 @@ public class NearestMonstersSensor extends NearestVisibleLivingEntitySensor {
         float distance = 10.0f;
         return target instanceof Monster
                 && !(target instanceof Angerable)
+                && !(target instanceof PiglinEntity)
                 && target.squaredDistanceTo(entity) <= (double) (distance * distance);
     }
 
