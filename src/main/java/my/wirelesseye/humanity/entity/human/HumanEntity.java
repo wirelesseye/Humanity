@@ -23,6 +23,7 @@ import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.StackReference;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
@@ -164,8 +165,13 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
     }
 
     @Override
-    protected void loot(ItemEntity item) {
-        ItemStack itemStack = item.getStack();
+    protected void loot(ItemEntity itemEntity) {
+        ItemStack itemStack = itemEntity.getStack();
+
+        if (itemStack.getItem() instanceof ArmorItem && this.inventory.tryReplaceArmor(itemStack)) {
+            return;
+        }
+
         this.inventory.insertStack(itemStack);
     }
 

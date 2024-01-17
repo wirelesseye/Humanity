@@ -21,6 +21,7 @@ import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
 
 import java.util.List;
+import java.util.Optional;
 
 public class HumanInventory implements Inventory, Nameable {
     public final HumanEntity human;
@@ -222,10 +223,10 @@ public class HumanInventory implements Inventory, Nameable {
         if (!human.world.isClient) {
             this.human.equipStack(EquipmentSlot.MAINHAND, getMainHandStack());
             this.human.equipStack(EquipmentSlot.OFFHAND, this.offHand.get(0));
-            this.human.equipStack(EquipmentSlot.HEAD, this.armor.get(0));
-            this.human.equipStack(EquipmentSlot.CHEST, this.armor.get(1));
-            this.human.equipStack(EquipmentSlot.LEGS, this.armor.get(2));
-            this.human.equipStack(EquipmentSlot.FEET, this.armor.get(3));
+            this.human.equipStack(EquipmentSlot.HEAD, this.armor.get(3));
+            this.human.equipStack(EquipmentSlot.CHEST, this.armor.get(2));
+            this.human.equipStack(EquipmentSlot.LEGS, this.armor.get(1));
+            this.human.equipStack(EquipmentSlot.FEET, this.armor.get(0));
         }
     }
 
@@ -338,8 +339,67 @@ public class HumanInventory implements Inventory, Nameable {
         }
         for (int i : slots) {
             ItemStack itemStack = this.armor.get(i);
-            if (damageSource.isFire() && itemStack.getItem().isFireproof() || !(itemStack.getItem() instanceof ArmorItem)) continue;
-            itemStack.damage((int)amount, this.human, human -> human.sendEquipmentBreakStatus(EquipmentSlot.fromTypeIndex(EquipmentSlot.Type.ARMOR, i)));
+            if (damageSource.isFire() && itemStack.getItem().isFireproof()
+                    || !(itemStack.getItem() instanceof ArmorItem)) continue;
+            itemStack.damage((int)amount, this.human, human -> {
+                EquipmentSlot slot = EquipmentSlot.fromTypeIndex(EquipmentSlot.Type.ARMOR, i);
+                human.sendEquipmentBreakStatus(slot);
+
+                // Equip armor if exists
+                Optional<ItemStack> stack = this.main.stream()
+                        .filter(s -> s.getItem() instanceof ArmorItem armorItem && armorItem.getSlotType() == slot)
+                        .min(HumanInventory::isBetterArmor);
+                if (stack.isPresent()) {
+                    this.armor.set(i, stack.get().copy());
+                    stack.get().setCount(0);
+                }
+            });
+        }
+    }
+
+    public void replaceArmor(ItemStack stack, int slot) {
+        ItemStack currentStack = this.armor.get(slot);
+        if (!currentStack.isEmpty()) {
+            if (getEmptySlot() != -1) {
+                this.addStack(currentStack);
+            } else {
+                return;
+            }
+        }
+
+        this.armor.set(slot, stack.copy());
+        stack.setCount(0);
+    }
+
+    public boolean tryReplaceArmor(ItemStack itemStack) {
+        EquipmentSlot slot = ((ArmorItem) itemStack.getItem()).getSlotType();
+        if (isBetterArmor(itemStack, armor.get(slot.getEntitySlotId())) > 0) {
+            this.replaceArmor(itemStack, slot.getEntitySlotId());
+            return true;
+        }
+
+        return false;
+    }
+
+    static public int isBetterArmor(ItemStack newArmor, ItemStack equippedArmor) {
+        if (equippedArmor.isEmpty()) {
+            return 1;
+        }
+        ArmorItem newArmorItem = (ArmorItem) newArmor.getItem();
+        Item equippedItem = equippedArmor.getItem();
+        if (equippedItem instanceof ArmorItem equippedArmorItem) {
+            if (equippedArmorItem.getSlotType() != newArmorItem.getSlotType()) {
+                return -1;
+            }
+            float newArmorScore = newArmorItem.getProtection() * 100
+                    + newArmorItem.getToughness() * 10
+                    + newArmorItem.getMaterial().getKnockbackResistance();
+            float equippedScore = equippedArmorItem.getProtection() * 100
+                    + equippedArmorItem.getToughness() * 10
+                    + equippedArmorItem.getMaterial().getKnockbackResistance();
+            return Math.round(newArmorScore - equippedScore);
+        } else {
+            return -1;
         }
     }
 }
