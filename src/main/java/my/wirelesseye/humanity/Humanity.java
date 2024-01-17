@@ -1,6 +1,7 @@
 package my.wirelesseye.humanity;
 
 import com.mojang.logging.LogUtils;
+import my.wirelesseye.humanity.gui.AllScreenHandlerTypes;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 
@@ -13,6 +14,7 @@ public class Humanity implements ModInitializer {
     public void onInitialize() {
         AllEntityTypes.register();
         AllItems.register();
+        AllScreenHandlerTypes.register();
         LOGGER.info("Humanity loaded");
     }
 }

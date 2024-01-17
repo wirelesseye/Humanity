@@ -217,6 +217,10 @@ public class HumanInventory implements Inventory, Nameable {
         if (!human.world.isClient) {
             this.human.equipStack(EquipmentSlot.MAINHAND, getMainHandStack());
             this.human.equipStack(EquipmentSlot.OFFHAND, this.offHand.get(0));
+            this.human.equipStack(EquipmentSlot.HEAD, this.armor.get(0));
+            this.human.equipStack(EquipmentSlot.CHEST, this.armor.get(1));
+            this.human.equipStack(EquipmentSlot.LEGS, this.armor.get(2));
+            this.human.equipStack(EquipmentSlot.FEET, this.armor.get(3));
         }
     }
 

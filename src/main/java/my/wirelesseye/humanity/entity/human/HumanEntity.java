@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import my.wirelesseye.humanity.entity.ai.AllMemoryModuleTypes;
 import my.wirelesseye.humanity.entity.ai.sensor.AllSensorTypes;
+import my.wirelesseye.humanity.gui.HumanScreenHandler;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.entity.EntityType;
@@ -24,8 +25,6 @@ import net.minecraft.inventory.StackReference;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
@@ -144,8 +143,7 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
     protected ActionResult interactMob(PlayerEntity player, Hand hand) {
         if (!this.world.isClient && !player.isSpectator()) {
             player.openHandledScreen(new SimpleNamedScreenHandlerFactory((i, playerInventory, playerEntity) ->
-                    new GenericContainerScreenHandler(
-                            ScreenHandlerType.GENERIC_9X4, i, playerInventory, this.inventory, 4),
+                    new HumanScreenHandler(i, playerInventory, this.inventory),
                     this.getDisplayName()));
         }
         return ActionResult.success(this.world.isClient);
