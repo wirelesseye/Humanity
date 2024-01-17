@@ -8,6 +8,7 @@
     "HoglinBrainMixin",
     "MemoryModuleTypeInvoker",
     "PiglinBrainMixin",
+    "PiglinBruteBrainMixin",
     "SensorTypeInvoker",
     "SlimeEntityMixin"
   ],
