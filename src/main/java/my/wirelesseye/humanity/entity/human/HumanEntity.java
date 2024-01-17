@@ -17,6 +17,7 @@ import net.minecraft.entity.ai.brain.sensor.SensorType;
 import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -173,5 +174,15 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
         super.dropInventory();
         this.inventory.vanishCursedItems();
         this.inventory.dropAll();
+    }
+
+    @Override
+    protected void damageArmor(DamageSource source, float amount) {
+        this.inventory.damageArmor(source, amount, HumanInventory.ARMOR_SLOTS);
+    }
+
+    @Override
+    protected void damageHelmet(DamageSource source, float amount) {
+        this.inventory.damageArmor(source, amount, HumanInventory.HELMET_SLOTS);
     }
 }

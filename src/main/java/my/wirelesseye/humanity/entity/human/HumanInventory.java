@@ -3,9 +3,11 @@ package my.wirelesseye.humanity.entity.human;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -28,6 +30,9 @@ public class HumanInventory implements Inventory, Nameable {
     public final DefaultedList<ItemStack> armor = DefaultedList.ofSize(4, ItemStack.EMPTY);
     public final DefaultedList<ItemStack> offHand = DefaultedList.ofSize(1, ItemStack.EMPTY);
     private final List<DefaultedList<ItemStack>> combinedInventory = ImmutableList.of(this.main, this.armor, this.offHand);
+
+    public static final int[] ARMOR_SLOTS = new int[]{0, 1, 2, 3};
+    public static final int[] HELMET_SLOTS = new int[]{3};
 
     public HumanInventory(HumanEntity human) {
         this.human = human;
@@ -322,5 +327,19 @@ public class HumanInventory implements Inventory, Nameable {
 
     public ItemStack getMainHandStack() {
         return this.main.get(this.selectedSlot);
+    }
+
+    public void damageArmor(DamageSource damageSource, float amount, int[] slots) {
+        if (amount <= 0.0f) {
+            return;
+        }
+        if ((amount /= 4.0f) < 1.0f) {
+            amount = 1.0f;
+        }
+        for (int i : slots) {
+            ItemStack itemStack = this.armor.get(i);
+            if (damageSource.isFire() && itemStack.getItem().isFireproof() || !(itemStack.getItem() instanceof ArmorItem)) continue;
+            itemStack.damage((int)amount, this.human, human -> human.sendEquipmentBreakStatus(EquipmentSlot.fromTypeIndex(EquipmentSlot.Type.ARMOR, i)));
+        }
     }
 }
