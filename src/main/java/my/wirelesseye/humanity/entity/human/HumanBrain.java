@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 import my.wirelesseye.humanity.AllEntityTypes;
 import my.wirelesseye.humanity.entity.ai.AllMemoryModuleTypes;
+import my.wirelesseye.humanity.entity.ai.task.SelectWeaponTask;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
@@ -31,7 +32,6 @@ public class HumanBrain {
     private static void addCoreActivities(Brain<HumanEntity> brain) {
         brain.setTaskList(Activity.CORE, ImmutableList.of(
                 Pair.of(0, new StayAboveWaterTask(0.8f)),
-                Pair.of(0, new WalkTask(0.75f)),
                 Pair.of(0, new OpenDoorsTask()),
                 Pair.of(0, new LookAroundTask(45, 90)),
                 Pair.of(1, new WanderAroundTask()),
@@ -52,6 +52,7 @@ public class HumanBrain {
         brain.setTaskList(Activity.FIGHT, ImmutableList.of(
                 Pair.of(0, new ForgetAttackTargetTask<>()),
                 Pair.of(0, new MeleeAttackTask(20)),
+                Pair.of(2, new SelectWeaponTask()),
                 Pair.of(2, new RangedApproachTask(0.75f))
         ), ImmutableSet.of(Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryModuleState.VALUE_PRESENT)));
     }

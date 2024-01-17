@@ -7,9 +7,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.text.Text;
@@ -21,7 +19,6 @@ import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
 
 import java.util.List;
-import java.util.Optional;
 
 public class HumanInventory implements Inventory, Nameable {
     public final HumanEntity human;
@@ -346,12 +343,20 @@ public class HumanInventory implements Inventory, Nameable {
                 human.sendEquipmentBreakStatus(slot);
 
                 // Equip armor if exists
-                Optional<ItemStack> stack = this.main.stream()
-                        .filter(s -> s.getItem() instanceof ArmorItem armorItem && armorItem.getSlotType() == slot)
-                        .min(HumanInventory::isBetterArmor);
-                if (stack.isPresent()) {
-                    this.armor.set(i, stack.get().copy());
-                    stack.get().setCount(0);
+                ItemStack stack = ItemStack.EMPTY;
+                int selectSlot = -1;
+                for (int j = 0; j < this.main.size(); j++) {
+                    ItemStack nextStack = this.main.get(j);
+                    if (nextStack.getItem() instanceof ArmorItem armorItem
+                            && armorItem.getSlotType() == slot
+                            && prefersNewArmor(nextStack, stack)) {
+                        stack = nextStack;
+                        selectSlot = j;
+                    }
+                }
+                if (!stack.isEmpty()) {
+                    this.armor.set(i, stack);
+                    this.main.set(selectSlot, ItemStack.EMPTY);
                 }
             });
         }
@@ -373,7 +378,7 @@ public class HumanInventory implements Inventory, Nameable {
 
     public boolean tryReplaceArmor(ItemStack itemStack) {
         EquipmentSlot slot = ((ArmorItem) itemStack.getItem()).getSlotType();
-        if (isBetterArmor(itemStack, armor.get(slot.getEntitySlotId())) > 0) {
+        if (prefersNewArmor(itemStack, armor.get(slot.getEntitySlotId()))) {
             this.replaceArmor(itemStack, slot.getEntitySlotId());
             return true;
         }
@@ -381,25 +386,67 @@ public class HumanInventory implements Inventory, Nameable {
         return false;
     }
 
-    static public int isBetterArmor(ItemStack newArmor, ItemStack equippedArmor) {
+    static private boolean prefersNewArmor(ItemStack newArmor, ItemStack equippedArmor) {
         if (equippedArmor.isEmpty()) {
-            return 1;
+            return true;
         }
         ArmorItem newArmorItem = (ArmorItem) newArmor.getItem();
         Item equippedItem = equippedArmor.getItem();
         if (equippedItem instanceof ArmorItem equippedArmorItem) {
             if (equippedArmorItem.getSlotType() != newArmorItem.getSlotType()) {
-                return -1;
+                return false;
             }
             float newArmorScore = newArmorItem.getProtection() * 100
                     + newArmorItem.getToughness() * 10
                     + newArmorItem.getMaterial().getKnockbackResistance();
-            float equippedScore = equippedArmorItem.getProtection() * 100
+            float equippedArmorScore = equippedArmorItem.getProtection() * 100
                     + equippedArmorItem.getToughness() * 10
                     + equippedArmorItem.getMaterial().getKnockbackResistance();
-            return Math.round(newArmorScore - equippedScore);
+            return newArmorScore > equippedArmorScore;
         } else {
-            return -1;
+            return false;
         }
+    }
+
+    public void selectPreferedMeleeWeapon() {
+        ItemStack stack = ItemStack.EMPTY;
+        int selectSlot = -1;
+        for (int j = 0; j < this.main.size(); j++) {
+            ItemStack nextStack = this.main.get(j);
+            if ((nextStack.getItem() instanceof SwordItem || nextStack.getItem() instanceof AxeItem)
+                    && prefersMeleeWeapon(nextStack, stack)) {
+                stack = nextStack;
+                selectSlot = j;
+            }
+        }
+        if (!stack.isEmpty()) {
+            this.selectedSlot = selectSlot;
+        }
+    }
+
+    static private boolean prefersMeleeWeapon(ItemStack newWeapon, ItemStack equippedWeapon) {
+        if (equippedWeapon.isEmpty()) {
+            return true;
+        }
+
+        float newWeaponDamage;
+        if (newWeapon.getItem() instanceof SwordItem swordItem) {
+            newWeaponDamage = swordItem.getAttackDamage();
+        } else if (newWeapon.getItem() instanceof AxeItem axeItem) {
+            newWeaponDamage = axeItem.getAttackDamage();
+        } else {
+            return false;
+        }
+
+        float equippedWeaponDamage;
+        if (equippedWeapon.getItem() instanceof SwordItem swordItem) {
+            equippedWeaponDamage = swordItem.getAttackDamage();
+        } else if (equippedWeapon.getItem() instanceof AxeItem axeItem) {
+            equippedWeaponDamage = axeItem.getAttackDamage();
+        } else {
+            return true;
+        }
+
+        return newWeaponDamage > equippedWeaponDamage;
     }
 }
