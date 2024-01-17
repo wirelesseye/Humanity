@@ -31,7 +31,7 @@ public class PiglinBrainMixin {
 
         Brain<PiglinEntity> brain = piglin.getBrain();
         Optional<PlayerEntity> player = brain.getOptionalMemory(MemoryModuleType.NEAREST_TARGETABLE_PLAYER_NOT_WEARING_GOLD);
-        HumanEntity human = WorldHelper.getClosestHuman(piglin);
+        HumanEntity human = WorldHelper.getClosestHuman(piglin, entity -> !PiglinBrain.wearsGoldArmor(entity));
 
         if (human != null && (player.isEmpty()
                 || piglin.squaredDistanceTo(human) < piglin.squaredDistanceTo(player.get()))) {
