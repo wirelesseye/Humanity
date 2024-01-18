@@ -13,10 +13,10 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "my.wirelesseye.humanity.HumanityClient"
+      "io.github.wirelesseye.humanity.HumanityClient"
     ],
     "main": [
-      "my.wirelesseye.humanity.Humanity"
+      "io.github.wirelesseye.humanity.Humanity"
     ]
   },
   "mixins": [
