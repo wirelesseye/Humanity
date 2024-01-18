@@ -39,8 +39,10 @@ public class WIconBar extends WWidget {
     public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
         float value = this.valueSupplier.get();
         int iconCount = (int) Math.ceil(maxValue / 2);
-        int fullIconCount = (int) value / 2;
-        int halfIconCount = (value % 2) >= 0.5 ? 1 : 0;
+
+        int roundValue = Math.round(value);
+        int fullIconCount = roundValue / 2;
+        int halfIconCount = roundValue % 2;
 
         int i = direction == WBar.Direction.LEFT ? iconCount - 1 : 0;
         while (direction == WBar.Direction.LEFT ? i >= 0 : i < iconCount) {
