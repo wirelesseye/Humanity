@@ -52,6 +52,8 @@ public class HumanScreenHandler extends SyncedGuiDescription {
     private boolean isSyncData;
     private final HumanEntity human;
 
+    private String firstName;
+    private String lastName;
     private float health = 0;
     private int foodLevel = 0;
 
@@ -72,6 +74,8 @@ public class HumanScreenHandler extends SyncedGuiDescription {
         root.validate(this);
 
         ScreenNetworking.of(this, NetworkSide.CLIENT).receive(HUMAN_SYNC_S2C_MESSAGE, buf -> {
+            this.firstName = buf.readString();
+            this.lastName = buf.readString();
             this.health = buf.readFloat();
             this.foodLevel = buf.readInt();
         });
@@ -88,6 +92,8 @@ public class HumanScreenHandler extends SyncedGuiDescription {
         super.sendContentUpdates();
         if (isSyncData) {
             ScreenNetworking.of(this, NetworkSide.SERVER).send(HUMAN_SYNC_S2C_MESSAGE, buf -> {
+                buf.writeString(human.getFirstName());
+                buf.writeString(human.getLastName());
                 buf.writeFloat(human.getHealth());
                 buf.writeInt(human.getHungerManager().getFoodLevel());
             });
@@ -132,11 +138,17 @@ public class HumanScreenHandler extends SyncedGuiDescription {
         WGridPanel panel = new WGridPanel();
         panel.setInsets(Insets.ROOT_PANEL);
 
+        WDynamicLabel firstNameLabel = new WDynamicLabel(() -> this.firstName);
+        panel.add(firstNameLabel, 0, 0);
+
+        WDynamicLabel lastNameLabel = new WDynamicLabel(() -> this.lastName);
+        panel.add(lastNameLabel, 0, 1);
+
         WHealthBar healthBar = new WHealthBar(() -> this.health, 20, 9);
-        panel.add(healthBar, 2, 1);
+        panel.add(healthBar, 4, 0);
 
         WHungerBar hungerBar = new WHungerBar(() -> (float) this.foodLevel, 20, 9);
-        panel.add(hungerBar, 2, 2);
+        panel.add(hungerBar, 4, 1);
 
         return panel;
     }
