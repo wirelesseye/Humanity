@@ -61,6 +61,7 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
             SensorType.HURT_BY);
 
     private final HumanInventory inventory = new HumanInventory(this);
+    private final HumanHungerManager hungerManager = new HumanHungerManager();
 
     public HumanEntity(EntityType<? extends PassiveEntity> entityType, World world) {
         super(entityType, world);
@@ -83,6 +84,7 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
         super.writeCustomDataToNbt(nbt);
         nbt.put("Inventory", this.inventory.writeNbt(new NbtList()));
         nbt.putInt("SelectedItemSlot", this.inventory.selectedSlot);
+        this.hungerManager.writeNbt(nbt);
     }
 
     @Override
@@ -90,6 +92,7 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
         super.readCustomDataFromNbt(nbt);
         this.inventory.readNbt(nbt.getList("Inventory", NbtType.COMPOUND));
         this.inventory.selectedSlot = nbt.getInt("SelectedItemSlot");
+        this.hungerManager.readNbt(nbt);
     }
 
     public Identifier getSkinTexture() {
@@ -121,6 +124,10 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
         HumanBrain.updateActivities(this);
         this.world.getProfiler().pop();
         super.mobTick();
+
+        if (!this.world.isClient) {
+            this.hungerManager.update(this);
+        }
     }
 
     @Override
@@ -145,7 +152,7 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
     protected ActionResult interactMob(PlayerEntity player, Hand hand) {
         if (!this.world.isClient && !player.isSpectator()) {
             player.openHandledScreen(new SimpleNamedScreenHandlerFactory((i, playerInventory, playerEntity) ->
-                    new HumanScreenHandler(i, playerInventory, this.inventory),
+                    new HumanScreenHandler(i, playerInventory,  this.inventory, this),
                     this.getDisplayName()));
         }
         return ActionResult.success(this.world.isClient);
@@ -154,6 +161,10 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
     @Override
     public Inventory getInventory() {
         return this.inventory;
+    }
+
+    public HumanHungerManager getHungerManager() {
+        return this.hungerManager;
     }
 
     @Override
@@ -190,5 +201,9 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
     @Override
     protected void damageHelmet(DamageSource source, float amount) {
         this.inventory.damageArmor(source, amount, HumanInventory.HELMET_SLOTS);
+    }
+
+    public boolean canFoodHeal() {
+        return this.getHealth() > 0.0f && this.getHealth() < this.getMaxHealth();
     }
 }

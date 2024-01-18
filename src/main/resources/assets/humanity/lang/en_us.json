@@ -1,4 +1,6 @@
 {
   "entity.humanity.human": "Human",
-  "item.humanity.human_spawn_egg": "Human Spawn Egg"
+  "item.humanity.human_spawn_egg": "Human Spawn Egg",
+  "gui.humanity.status": "Status",
+  "gui.humanity.inventory": "Inventory"
 }
