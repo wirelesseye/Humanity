@@ -1,5 +1,6 @@
 package io.github.wirelesseye.humanity.entity.human;
 
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
@@ -39,6 +40,11 @@ public class HumanEntityRenderer extends LivingEntityRenderer<HumanEntity, Playe
 
     @Override
     public Identifier getTexture(HumanEntity entity) {
+        return entity.getSkinTexture();
+    }
+
+    @Override
+    public void render(HumanEntity entity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         if (entity.isSlim() != this.slim) {
             this.slim = entity.isSlim();
             this.model = slim ? this.slimModel : this.normalModel;
@@ -49,7 +55,7 @@ public class HumanEntityRenderer extends LivingEntityRenderer<HumanEntity, Playe
                     slim ? slimInnerArmorModel : normalInnerArmorModel,
                     slim ? slimOuterArmorModel : normalOuterArmorModel));
         }
-        return entity.getSkinTexture();
+        super.render(entity, f, g, matrixStack, vertexConsumerProvider, i);
     }
 
     @Override
