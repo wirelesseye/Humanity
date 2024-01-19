@@ -14,14 +14,9 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.util.Identifier;
 
 public class HumanityClient implements ClientModInitializer {
-    public static final EntityModelLayer MODEL_HUMAN_LAYER = new EntityModelLayer(new Identifier(Humanity.ID,
-            "human"), "main");
-
     @Override
     public void onInitializeClient() {
         EntityRendererRegistry.register(AllEntityTypes.HUMAN, HumanEntityRenderer::new);
-        EntityModelLayerRegistry.registerModelLayer(MODEL_HUMAN_LAYER,
-                () -> TexturedModelData.of(PlayerEntityModel.getTexturedModelData(Dilation.NONE, false), 64, 64));
         HandledScreens.register(AllScreenHandlerTypes.HUMAN, HumanScreen::new);
     }
 }

@@ -7,10 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import io.github.wirelesseye.humanity.util.NameGenerator;
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.client.util.DefaultSkinHelper;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.InventoryOwner;
-import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
@@ -19,6 +16,9 @@ import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,6 +34,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.LocalDifficulty;
+import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,20 +66,21 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
             AllSensorTypes.NEAREST_MONSTERS,
             SensorType.HURT_BY);
 
+    private static final Identifier STEVE_SKIN = new Identifier("textures/entity/steve.png");
+    private static final Identifier ALEX_SKIN = new Identifier("textures/entity/alex.png");
+
     private final HumanInventory inventory = new HumanInventory(this);
     private final HumanHungerManager hungerManager = new HumanHungerManager();
 
     private static final NameGenerator nameGenerator = new NameGenerator();
     private String lastName;
+    private static final TrackedData<Boolean> SLIM = DataTracker.registerData(HumanEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
     public HumanEntity(EntityType<? extends PassiveEntity> entityType, World world) {
         super(entityType, world);
         this.getNavigation().setCanSwim(true);
         ((MobNavigation)this.getNavigation()).setCanPathThroughDoors(true);
         this.setCanPickUpLoot(true);
-
-        setFirstName(nameGenerator.generateFirstName());
-        setLastName(nameGenerator.generateLastName());
     }
 
     public static DefaultAttributeContainer.Builder createHumanAttributes() {
@@ -90,12 +93,26 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
     }
 
     @Override
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
+        setFirstName(nameGenerator.generateFirstName());
+        setLastName(nameGenerator.generateLastName());
+        return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
+    }
+
+    @Override
+    protected void initDataTracker() {
+        super.initDataTracker();
+        this.dataTracker.startTracking(SLIM, this.getRandom().nextBoolean());
+    }
+
+    @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
         nbt.put("Inventory", this.inventory.writeNbt(new NbtList()));
         nbt.putInt("SelectedItemSlot", this.inventory.selectedSlot);
         this.hungerManager.writeNbt(nbt);
         nbt.putString("LastName", this.lastName);
+        nbt.putBoolean("Slim", this.isSlim());
     }
 
     @Override
@@ -105,10 +122,19 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
         this.inventory.selectedSlot = nbt.getInt("SelectedItemSlot");
         this.hungerManager.readNbt(nbt);
         this.lastName = nbt.getString("LastName");
+        this.setIsSlim(nbt.getBoolean("Slim"));
+    }
+
+    public boolean isSlim() {
+        return this.getDataTracker().get(SLIM);
+    }
+
+    public void setIsSlim(boolean isSlim) {
+        this.getDataTracker().set(SLIM, isSlim);
     }
 
     public Identifier getSkinTexture() {
-        return DefaultSkinHelper.getTexture();
+        return this.isSlim() ? ALEX_SKIN : STEVE_SKIN;
     }
 
     public String getFirstName() {
