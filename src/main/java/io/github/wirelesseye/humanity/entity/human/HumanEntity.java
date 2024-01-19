@@ -30,6 +30,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -259,5 +261,23 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
 
     public boolean canFoodHeal() {
         return this.getHealth() > 0.0f && this.getHealth() < this.getMaxHealth();
+    }
+
+    public boolean canConsume(boolean ignoreHunger) {
+        return ignoreHunger || this.hungerManager.isNotFull();
+    }
+
+    @Override
+    public ItemStack eatFood(World world, ItemStack stack) {
+        this.getHungerManager().eat(stack.getItem(), stack);
+        world.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_PLAYER_BURP,
+                SoundCategory.PLAYERS, 0.5f, world.random.nextFloat() * 0.1f + 0.9f);
+        return super.eatFood(world, stack);
+    }
+
+    public void addExhaustion(float exhaustion) {
+        if (!this.world.isClient) {
+            this.hungerManager.addExhaustion(exhaustion);
+        }
     }
 }

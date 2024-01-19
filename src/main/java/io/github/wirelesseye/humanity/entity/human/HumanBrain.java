@@ -1,6 +1,7 @@
 package io.github.wirelesseye.humanity.entity.human;
 
 import io.github.wirelesseye.humanity.entity.ai.AllMemoryModuleTypes;
+import io.github.wirelesseye.humanity.entity.ai.task.EatTask;
 import io.github.wirelesseye.humanity.entity.ai.task.SelectWeaponTask;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -34,6 +35,7 @@ public class HumanBrain {
                 Pair.of(0, new StayAboveWaterTask(0.8f)),
                 Pair.of(0, new OpenDoorsTask()),
                 Pair.of(0, new LookAroundTask(45, 90)),
+                Pair.of(0, new EatTask()),
                 Pair.of(1, new WanderAroundTask()),
                 Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(0.5f, false, 4))));
     }
