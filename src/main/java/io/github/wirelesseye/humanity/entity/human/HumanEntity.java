@@ -94,8 +94,8 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
         super.writeCustomDataToNbt(nbt);
         nbt.put("Inventory", this.inventory.writeNbt(new NbtList()));
         nbt.putInt("SelectedItemSlot", this.inventory.selectedSlot);
-        nbt.putString("LastName", this.lastName);
         this.hungerManager.writeNbt(nbt);
+        nbt.putString("LastName", this.lastName);
     }
 
     @Override

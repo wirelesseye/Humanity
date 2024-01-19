@@ -29,7 +29,7 @@ import net.minecraft.util.Identifier;
 
 
 public class HumanScreenHandler extends SyncedGuiDescription {
-    private static final Identifier HUMAN_REQUEST_C2S_MESSAGE = new Identifier(Humanity.ID, "human_request_s2c");
+    private static final Identifier HUMAN_START_SYNC_C2S_MESSAGE = new Identifier(Humanity.ID, "human_start_sync_c2s");
     private static final Identifier HUMAN_SYNC_S2C_MESSAGE = new Identifier(Humanity.ID, "human_sync_s2c");
 
     private static final int INVENTORY_SIZE = 41;
@@ -80,11 +80,11 @@ public class HumanScreenHandler extends SyncedGuiDescription {
             this.foodLevel = buf.readInt();
         });
 
-        ScreenNetworking.of(this, NetworkSide.SERVER).receive(HUMAN_REQUEST_C2S_MESSAGE, buf -> {
+        ScreenNetworking.of(this, NetworkSide.SERVER).receive(HUMAN_START_SYNC_C2S_MESSAGE, buf -> {
             isSyncData = true;
         });
 
-        ScreenNetworking.of(this, NetworkSide.CLIENT).send(HUMAN_REQUEST_C2S_MESSAGE, buf -> {});
+        ScreenNetworking.of(this, NetworkSide.CLIENT).send(HUMAN_START_SYNC_C2S_MESSAGE, buf -> {});
     }
 
     @Override
