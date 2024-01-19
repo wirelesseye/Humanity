@@ -1,7 +1,9 @@
 package io.github.wirelesseye.humanity;
 
+import io.github.wirelesseye.humanity.entity.AllEntityTypes;
 import io.github.wirelesseye.humanity.gui.AllScreenHandlerTypes;
 import com.mojang.logging.LogUtils;
+import io.github.wirelesseye.humanity.item.AllItems;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 

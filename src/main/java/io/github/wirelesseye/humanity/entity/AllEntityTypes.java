@@ -1,5 +1,6 @@
-package io.github.wirelesseye.humanity;
+package io.github.wirelesseye.humanity.entity;
 
+import io.github.wirelesseye.humanity.Humanity;
 import io.github.wirelesseye.humanity.entity.human.HumanEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;

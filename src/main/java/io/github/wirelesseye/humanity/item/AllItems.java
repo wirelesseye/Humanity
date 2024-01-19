@@ -1,5 +1,7 @@
-package io.github.wirelesseye.humanity;
+package io.github.wirelesseye.humanity.item;
 
+import io.github.wirelesseye.humanity.entity.AllEntityTypes;
+import io.github.wirelesseye.humanity.Humanity;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;

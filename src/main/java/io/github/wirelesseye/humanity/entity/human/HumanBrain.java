@@ -6,7 +6,7 @@ import io.github.wirelesseye.humanity.entity.ai.task.SelectWeaponTask;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
-import io.github.wirelesseye.humanity.AllEntityTypes;
+import io.github.wirelesseye.humanity.entity.AllEntityTypes;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
