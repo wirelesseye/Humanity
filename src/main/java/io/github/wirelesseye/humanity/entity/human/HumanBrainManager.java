@@ -23,7 +23,6 @@ public class HumanBrainManager {
         HumanBrainManager.addCoreActivities(brain);
         HumanBrainManager.addIdleActivities(brain);
         HumanBrainManager.addFightActivities(brain);
-        HumanBrainManager.addAvoidActivities(brain);
         brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
         brain.setDefaultActivity(Activity.IDLE);
         brain.resetPossibleActivities();
@@ -55,20 +54,10 @@ public class HumanBrainManager {
         brain.setTaskList(Activity.FIGHT, ImmutableList.of(
                 Pair.of(0, new SprintTask()),
                 Pair.of(0, new ForgetAttackTargetTask<>()),
-                Pair.of(0, new AvoidDangerTask()),
+                Pair.of(0, new AdvancedApproachTask(0.6f, 8)),
                 Pair.of(1, new MeleeAttackTask(20)),
-                Pair.of(2, new SelectWeaponTask()),
-                Pair.of(2, new RangedApproachTask(0.6f))
+                Pair.of(2, new SelectWeaponTask())
         ), ImmutableSet.of(Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryModuleState.VALUE_PRESENT)));
-    }
-
-    private static void addAvoidActivities(Brain<HumanEntity> brain) {
-        brain.setTaskList(Activity.AVOID, ImmutableList.of(
-                Pair.of(0, new SprintTask()),
-                Pair.of(0, new ForgetAvoidTargetTask<>(8)),
-                Pair.of(0, GoToRememberedPositionTask.toEntity(
-                        MemoryModuleType.AVOID_TARGET, 0.6f, 8, true))
-        ), ImmutableSet.of(Pair.of(MemoryModuleType.AVOID_TARGET, MemoryModuleState.VALUE_PRESENT)));
     }
 
     private static Pair<Integer, Task<LivingEntity>> createFreeFollowTask() {
@@ -87,7 +76,7 @@ public class HumanBrainManager {
 
     public static void updateActivities(HumanEntity human) {
         Brain<HumanEntity> brain = human.getBrain();
-        brain.resetPossibleActivities(ImmutableList.of(Activity.AVOID, Activity.FIGHT, Activity.IDLE));
+        brain.resetPossibleActivities(ImmutableList.of(Activity.FIGHT, Activity.IDLE));
     }
 
     private static Optional<? extends LivingEntity> getAttackTarget(HumanEntity human) {
