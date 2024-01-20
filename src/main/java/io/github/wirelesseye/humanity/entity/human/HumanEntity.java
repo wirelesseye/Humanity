@@ -52,6 +52,7 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
             MemoryModuleType.VISIBLE_MOBS,
             MemoryModuleType.ATTACK_TARGET,
             MemoryModuleType.ATTACK_COOLING_DOWN,
+            MemoryModuleType.AVOID_TARGET,
             MemoryModuleType.NEAREST_PLAYERS,
             MemoryModuleType.NEAREST_VISIBLE_PLAYER,
             MemoryModuleType.NEAREST_VISIBLE_TARGETABLE_PLAYER,
