@@ -354,4 +354,9 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
             }
         }
     }
+
+    @Override
+    public boolean canBeLeashedBy(PlayerEntity player) {
+        return false;
+    }
 }
