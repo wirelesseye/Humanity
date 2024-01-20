@@ -37,14 +37,15 @@ public class HumanBrainManager {
                 Pair.of(0, new LookAroundTask(45, 90)),
                 Pair.of(0, new EatTask()),
                 Pair.of(1, new WanderAroundTask()),
-                Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(0.5f, false, 4))));
+                Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(0.6f, false, 4))));
     }
 
     private static void addIdleActivities(Brain<HumanEntity> brain) {
         brain.setTaskList(Activity.IDLE, ImmutableList.of(
+                Pair.of(0, new DisableSprintTask()),
                 Pair.of(2, new RandomTask<>(ImmutableList.of(
-                        Pair.of(new FindWalkTargetTask(0.5f), 1),
-                        Pair.of(new GoTowardsLookTarget(0.5f, 2), 1),
+                        Pair.of(new FindWalkTargetTask(0.6f), 1),
+                        Pair.of(new GoTowardsLookTarget(0.6f, 2), 1),
                         Pair.of(new WaitTask(30, 60), 1)))),
                 Pair.of(2, new UpdateAttackTargetTask<>(HumanBrainManager::getAttackTarget)),
                 createFreeFollowTask()));
@@ -52,19 +53,21 @@ public class HumanBrainManager {
 
     private static void addFightActivities(Brain<HumanEntity> brain) {
         brain.setTaskList(Activity.FIGHT, ImmutableList.of(
+                Pair.of(0, new SprintTask()),
                 Pair.of(0, new ForgetAttackTargetTask<>()),
                 Pair.of(0, new AvoidDangerTask()),
                 Pair.of(1, new MeleeAttackTask(20)),
                 Pair.of(2, new SelectWeaponTask()),
-                Pair.of(2, new RangedApproachTask(0.75f))
+                Pair.of(2, new RangedApproachTask(0.6f))
         ), ImmutableSet.of(Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryModuleState.VALUE_PRESENT)));
     }
 
     private static void addAvoidActivities(Brain<HumanEntity> brain) {
         brain.setTaskList(Activity.AVOID, ImmutableList.of(
+                Pair.of(0, new SprintTask()),
                 Pair.of(0, new ForgetAvoidTargetTask<>(8)),
                 Pair.of(0, GoToRememberedPositionTask.toEntity(
-                        MemoryModuleType.AVOID_TARGET, 0.75f, 8, true))
+                        MemoryModuleType.AVOID_TARGET, 0.6f, 8, true))
         ), ImmutableSet.of(Pair.of(MemoryModuleType.AVOID_TARGET, MemoryModuleState.VALUE_PRESENT)));
     }
 
