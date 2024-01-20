@@ -32,10 +32,12 @@ import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.tag.FluidTags;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
@@ -278,6 +280,77 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
     public void addExhaustion(float exhaustion) {
         if (!this.world.isClient) {
             this.hungerManager.addExhaustion(exhaustion);
+        }
+    }
+
+    @Override
+    public boolean tryAttack(Entity target) {
+        if (super.tryAttack(target)) {
+            this.addExhaustion(0.1f);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void applyDamage(DamageSource source, float amount) {
+        super.applyDamage(source, amount);
+        this.addExhaustion(source.getExhaustion());
+    }
+
+    @Override
+    protected void jump() {
+        super.jump();
+        if (this.isSprinting()) {
+            this.addExhaustion(0.2f);
+        } else {
+            this.addExhaustion(0.05f);
+        }
+    }
+
+    @Override
+    public void travel(Vec3d movementInput) {
+        double d = this.getX();
+        double e = this.getY();
+        double f = this.getZ();
+        super.travel(movementInput);
+        this.addMovementExhaustion(this.getX() - d, this.getY() - e, this.getZ() - f);
+    }
+
+    public void addMovementExhaustion(double dx, double dy, double dz) {
+        if (this.hasVehicle()) {
+            return;
+        }
+        float v = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (this.isSwimming()) {
+            int i = Math.round(v * 100.0f);
+            if (i > 0) {
+                this.addExhaustion(0.01f * (float)i * 0.01f);
+            }
+        } else if (this.isSubmergedIn(FluidTags.WATER)) {
+            int i = Math.round(v * 100.0f);
+            if (i > 0) {
+                this.addExhaustion(0.01f * (float)i * 0.01f);
+            }
+        } else {
+            float v1 = (float) Math.sqrt(dx * dx + dz * dz);
+            if (this.isTouchingWater()) {
+                int i = Math.round(v1 * 100.0f);
+                if (i > 0) {
+                    this.addExhaustion(0.01f * (float)i * 0.01f);
+                }
+            }  else if (this.onGround) {
+                int i = Math.round(v1 * 100.0f);
+                if (i > 0) {
+                    if (this.isSprinting()) {
+                        this.addExhaustion(0.1f * (float)i * 0.01f);
+                    } else if (this.isInSneakingPose()) {
+                        this.addExhaustion(0.0f * (float)i * 0.01f);
+                    } else {
+                        this.addExhaustion(0.0f * (float)i * 0.01f);
+                    }
+                }
+            }
         }
     }
 }

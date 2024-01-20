@@ -10,7 +10,8 @@
     "PiglinBrainMixin",
     "PiglinBruteBrainMixin",
     "SensorTypeInvoker",
-    "SlimeEntityMixin"
+    "SlimeEntityMixin",
+    "StatusEffectMixin"
   ],
   "client": [
   ],
