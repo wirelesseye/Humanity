@@ -56,7 +56,7 @@ public class HumanBrainManager {
                 Pair.of(0, new ForgetAttackTargetTask<>()),
                 Pair.of(0, new AdvancedApproachTask(0.6f, 8)),
                 Pair.of(1, new MeleeAttackTask(20)),
-                Pair.of(2, new SelectWeaponTask())
+                Pair.of(1, new SelectWeaponTask())
         ), ImmutableSet.of(Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryModuleState.VALUE_PRESENT)));
     }
 
