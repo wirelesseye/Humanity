@@ -40,9 +40,9 @@ public class WIconBar extends WWidget {
         float value = this.valueSupplier.get();
         int iconCount = (int) Math.ceil(maxValue / 2);
 
-        int roundValue = Math.round(value);
-        int fullIconCount = roundValue / 2;
-        int halfIconCount = roundValue % 2;
+        int ceilValue = (int) Math.ceil(value);
+        int fullIconCount = ceilValue / 2;
+        int halfIconCount = ceilValue % 2;
 
         int i = direction == WBar.Direction.LEFT ? iconCount - 1 : 0;
         while (direction == WBar.Direction.LEFT ? i >= 0 : i < iconCount) {
