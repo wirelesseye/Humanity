@@ -165,7 +165,7 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
 
     @Override
     protected Brain<HumanEntity> deserializeBrain(Dynamic<?> dynamic) {
-        return HumanBrain.create(this.createBrainProfile().deserialize(dynamic));
+        return HumanBrainManager.create(this.createBrainProfile().deserialize(dynamic));
     }
 
     @Override
@@ -180,7 +180,7 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
         this.getBrain().tick((ServerWorld) this.world, this);
         this.world.getProfiler().pop();
         this.world.getProfiler().push("humanActivityUpdate");
-        HumanBrain.updateActivities(this);
+        HumanBrainManager.updateActivities(this);
         this.world.getProfiler().pop();
         super.mobTick();
 

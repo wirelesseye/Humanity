@@ -18,12 +18,12 @@ import net.minecraft.entity.ai.brain.task.*;
 import java.util.Optional;
 
 
-public class HumanBrain {
+public class HumanBrainManager {
     protected static Brain<HumanEntity> create(Brain<HumanEntity> brain) {
-        HumanBrain.addCoreActivities(brain);
-        HumanBrain.addIdleActivities(brain);
-        HumanBrain.addFightActivities(brain);
-        HumanBrain.addAvoidActivities(brain);
+        HumanBrainManager.addCoreActivities(brain);
+        HumanBrainManager.addIdleActivities(brain);
+        HumanBrainManager.addFightActivities(brain);
+        HumanBrainManager.addAvoidActivities(brain);
         brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
         brain.setDefaultActivity(Activity.IDLE);
         brain.resetPossibleActivities();
@@ -46,7 +46,7 @@ public class HumanBrain {
                         Pair.of(new FindWalkTargetTask(0.5f), 1),
                         Pair.of(new GoTowardsLookTarget(0.5f, 2), 1),
                         Pair.of(new WaitTask(30, 60), 1)))),
-                Pair.of(2, new UpdateAttackTargetTask<>(HumanBrain::getAttackTarget)),
+                Pair.of(2, new UpdateAttackTargetTask<>(HumanBrainManager::getAttackTarget)),
                 createFreeFollowTask()));
     }
 
