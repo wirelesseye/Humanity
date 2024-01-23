@@ -26,7 +26,7 @@ public class NearestMonstersSensor extends Sensor<LivingEntity> {
     }
 
     private boolean matchDanger(LivingEntity entity, LivingEntity target) {
-        if (entity.getHealth() < 5) {
+        if (entity.getHealth() < 5 && matchMonsters(entity, target)) {
             return true;
         }
 
