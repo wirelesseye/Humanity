@@ -43,6 +43,7 @@ public class HumanBrainManager {
     private static void addIdleActivities(Brain<HumanEntity> brain) {
         brain.setTaskList(Activity.IDLE, ImmutableList.of(
                 Pair.of(0, new DisableSprintTask()),
+                Pair.of(1, new FollowLeaderPlayerTask(0.55f, 5, 30, 10)),
                 Pair.of(2, new RandomTask<>(ImmutableList.of(
                         Pair.of(new FindWalkTargetTask(0.55f), 1),
                         Pair.of(new GoTowardsLookTarget(0.55f, 2), 1),

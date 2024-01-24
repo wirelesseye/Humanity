@@ -80,24 +80,7 @@ public class HumanScreenHandler extends SyncedGuiDescription {
 
         ScreenNetworking.of(this, NetworkSide.CLIENT).receive(HUMAN_SYNC_S2C, buf -> {
             this.humanData.readFromBuffer(buf);
-
-            if (this.humanData.leaderPlayerUuid != null) {
-                if (this.humanData.leaderPlayerUuid.equals(this.playerInventory.player.getUuid())) {
-                    this.inviteOrRemoveButton.setLabel(Text.of("Remove"));
-                    this.inviteOrRemoveButton.setOnClick(() -> ScreenNetworking.of(this, NetworkSide.CLIENT)
-                            .send(HUMAN_REMOVE_FROM_PARTY_C2S, buf1 -> {}));
-                    this.inviteOrRemoveButton.setEnabled(true);
-                } else {
-                    this.inviteOrRemoveButton.setLabel(Text.of("Occupied"));
-                    this.inviteOrRemoveButton.setEnabled(false);
-                }
-
-            } else {
-                this.inviteOrRemoveButton.setLabel(Text.of("Invite"));
-                this.inviteOrRemoveButton.setOnClick(() -> ScreenNetworking.of(this, NetworkSide.CLIENT)
-                        .send(HUMAN_INVITE_TO_PARTY_C2S, buf1 -> {}));
-                this.inviteOrRemoveButton.setEnabled(true);
-            }
+            onHumanDataReceived();
         });
 
         ScreenNetworking.of(this, NetworkSide.SERVER).receive(HUMAN_START_SYNC_C2S, buf -> isSyncData = true);
@@ -125,6 +108,26 @@ public class HumanScreenHandler extends SyncedGuiDescription {
         if (isSyncData) {
             this.humanData.readFromHumanEntity(this.human);
             ScreenNetworking.of(this, NetworkSide.SERVER).send(HUMAN_SYNC_S2C, this.humanData::writeToBuffer);
+        }
+    }
+
+    private void onHumanDataReceived() {
+        if (this.humanData.leaderPlayerUuid != null) {
+            if (this.humanData.leaderPlayerUuid.equals(this.playerInventory.player.getUuid())) {
+                this.inviteOrRemoveButton.setLabel(Text.of("Remove"));
+                this.inviteOrRemoveButton.setOnClick(() -> ScreenNetworking.of(this, NetworkSide.CLIENT)
+                        .send(HUMAN_REMOVE_FROM_PARTY_C2S, buf1 -> {}));
+                this.inviteOrRemoveButton.setEnabled(true);
+            } else {
+                this.inviteOrRemoveButton.setLabel(Text.of("Occupied"));
+                this.inviteOrRemoveButton.setEnabled(false);
+            }
+
+        } else {
+            this.inviteOrRemoveButton.setLabel(Text.of("Invite"));
+            this.inviteOrRemoveButton.setOnClick(() -> ScreenNetworking.of(this, NetworkSide.CLIENT)
+                    .send(HUMAN_INVITE_TO_PARTY_C2S, buf1 -> {}));
+            this.inviteOrRemoveButton.setEnabled(true);
         }
     }
 
