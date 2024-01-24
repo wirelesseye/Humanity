@@ -3,7 +3,7 @@ package io.github.wirelesseye.humanity;
 import io.github.wirelesseye.humanity.entity.AllEntityTypes;
 import io.github.wirelesseye.humanity.gui.AllScreenHandlerTypes;
 import io.github.wirelesseye.humanity.entity.human.HumanEntityRenderer;
-import io.github.wirelesseye.humanity.gui.HumanScreen;
+import io.github.wirelesseye.humanity.gui.human.HumanScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;

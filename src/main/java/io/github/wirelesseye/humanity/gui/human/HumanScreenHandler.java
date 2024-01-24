@@ -1,5 +1,6 @@
-package io.github.wirelesseye.humanity.gui;
+package io.github.wirelesseye.humanity.gui.human;
 
+import io.github.wirelesseye.humanity.gui.AllScreenHandlerTypes;
 import io.github.wirelesseye.humanity.gui.widget.WHungerBar;
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.networking.NetworkSide;
@@ -24,13 +25,16 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 
 public class HumanScreenHandler extends SyncedGuiDescription {
-    private static final Identifier HUMAN_START_SYNC_C2S_MESSAGE = new Identifier(Humanity.ID, "human_start_sync_c2s");
-    private static final Identifier HUMAN_SYNC_S2C_MESSAGE = new Identifier(Humanity.ID, "human_sync_s2c");
+    private static final Identifier HUMAN_START_SYNC_C2S = new Identifier(Humanity.ID, "human_start_sync_c2s");
+    private static final Identifier HUMAN_SYNC_S2C = new Identifier(Humanity.ID, "human_sync_s2c");
+    private static final Identifier HUMAN_INVITE_TO_PARTY_C2S = new Identifier(Humanity.ID, "human_invite_to_party_c2s");
+    private static final Identifier HUMAN_REMOVE_FROM_PARTY_C2S = new Identifier(Humanity.ID, "human_remove_from_party_c2s");
 
     private static final int INVENTORY_SIZE = 41;
     private static final int ARMOR_OFFSET = 36;
@@ -51,11 +55,9 @@ public class HumanScreenHandler extends SyncedGuiDescription {
 
     private boolean isSyncData;
     private final HumanEntity human;
+    private final HumanData humanData = new HumanData();
 
-    private String firstName;
-    private String lastName;
-    private float health = 0;
-    private int foodLevel = 0;
+    private WButton inviteOrRemoveButton;
 
     public HumanScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, new SimpleInventory(INVENTORY_SIZE), null);
@@ -66,6 +68,9 @@ public class HumanScreenHandler extends SyncedGuiDescription {
         super(AllScreenHandlerTypes.HUMAN, syncId, playerInventory);
         this.blockInventory = inventory;
         this.human = human;
+        if (human != null) {
+            this.humanData.readFromHumanEntity(human);
+        }
 
         setTitleVisible(false);
 
@@ -73,30 +78,53 @@ public class HumanScreenHandler extends SyncedGuiDescription {
         setRootPanel(root);
         root.validate(this);
 
-        ScreenNetworking.of(this, NetworkSide.CLIENT).receive(HUMAN_SYNC_S2C_MESSAGE, buf -> {
-            this.firstName = buf.readString();
-            this.lastName = buf.readString();
-            this.health = buf.readFloat();
-            this.foodLevel = buf.readInt();
+        ScreenNetworking.of(this, NetworkSide.CLIENT).receive(HUMAN_SYNC_S2C, buf -> {
+            this.humanData.readFromBuffer(buf);
+
+            if (this.humanData.leaderPlayerUuid != null) {
+                if (this.humanData.leaderPlayerUuid.equals(this.playerInventory.player.getUuid())) {
+                    this.inviteOrRemoveButton.setLabel(Text.of("Remove"));
+                    this.inviteOrRemoveButton.setOnClick(() -> ScreenNetworking.of(this, NetworkSide.CLIENT)
+                            .send(HUMAN_REMOVE_FROM_PARTY_C2S, buf1 -> {}));
+                    this.inviteOrRemoveButton.setEnabled(true);
+                } else {
+                    this.inviteOrRemoveButton.setLabel(Text.of("Occupied"));
+                    this.inviteOrRemoveButton.setEnabled(false);
+                }
+
+            } else {
+                this.inviteOrRemoveButton.setLabel(Text.of("Invite"));
+                this.inviteOrRemoveButton.setOnClick(() -> ScreenNetworking.of(this, NetworkSide.CLIENT)
+                        .send(HUMAN_INVITE_TO_PARTY_C2S, buf1 -> {}));
+                this.inviteOrRemoveButton.setEnabled(true);
+            }
         });
 
-        ScreenNetworking.of(this, NetworkSide.SERVER).receive(HUMAN_START_SYNC_C2S_MESSAGE, buf -> {
-            isSyncData = true;
+        ScreenNetworking.of(this, NetworkSide.SERVER).receive(HUMAN_START_SYNC_C2S, buf -> isSyncData = true);
+
+        ScreenNetworking.of(this, NetworkSide.CLIENT).send(HUMAN_START_SYNC_C2S, buf -> {});
+
+        ScreenNetworking.of(this, NetworkSide.SERVER).receive(HUMAN_INVITE_TO_PARTY_C2S, buf -> {
+            assert this.human != null;
+            if (this.humanData.leaderPlayerUuid == null) {
+                this.human.setLeaderPlayerUuid(this.playerInventory.player.getUuid());
+            }
         });
 
-        ScreenNetworking.of(this, NetworkSide.CLIENT).send(HUMAN_START_SYNC_C2S_MESSAGE, buf -> {});
+        ScreenNetworking.of(this, NetworkSide.SERVER).receive(HUMAN_REMOVE_FROM_PARTY_C2S, buf -> {
+            assert this.human != null;
+            if (this.playerInventory.player.getUuid().equals(humanData.leaderPlayerUuid)) {
+                this.human.setLeaderPlayerUuid(null);
+            }
+        });
     }
 
     @Override
     public void sendContentUpdates() {
         super.sendContentUpdates();
         if (isSyncData) {
-            ScreenNetworking.of(this, NetworkSide.SERVER).send(HUMAN_SYNC_S2C_MESSAGE, buf -> {
-                buf.writeString(human.getFirstName());
-                buf.writeString(human.getLastName());
-                buf.writeFloat(human.getHealth());
-                buf.writeInt(human.getHungerManager().getFoodLevel());
-            });
+            this.humanData.readFromHumanEntity(this.human);
+            ScreenNetworking.of(this, NetworkSide.SERVER).send(HUMAN_SYNC_S2C, this.humanData::writeToBuffer);
         }
     }
 
@@ -138,17 +166,23 @@ public class HumanScreenHandler extends SyncedGuiDescription {
         WGridPanel panel = new WGridPanel();
         panel.setInsets(Insets.ROOT_PANEL);
 
-        WDynamicLabel firstNameLabel = new WDynamicLabel(() -> this.firstName);
+        WDynamicLabel firstNameLabel = new WDynamicLabel(() -> this.humanData.firstName);
         panel.add(firstNameLabel, 0, 0);
 
-        WDynamicLabel lastNameLabel = new WDynamicLabel(() -> this.lastName);
+        WDynamicLabel lastNameLabel = new WDynamicLabel(() -> this.humanData.lastName);
         panel.add(lastNameLabel, 0, 1);
 
-        WHealthBar healthBar = new WHealthBar(() -> this.health, 20, 9);
+        WHealthBar healthBar = new WHealthBar(() -> this.humanData.health, 20, 9);
         panel.add(healthBar, 4, 0);
 
-        WHungerBar hungerBar = new WHungerBar(() -> (float) this.foodLevel, 20, 9);
+        WHungerBar hungerBar = new WHungerBar(() -> (float) this.humanData.foodLevel, 20, 9);
         panel.add(hungerBar, 4, 1);
+
+        WLabel partyLabel = new WLabel(Text.of("Party"));
+        panel.add(partyLabel, 0, 3);
+
+        inviteOrRemoveButton = new WButton(Text.of("Invite"));
+        panel.add(inviteOrRemoveButton, 0, 4, 3, 1);
 
         return panel;
     }

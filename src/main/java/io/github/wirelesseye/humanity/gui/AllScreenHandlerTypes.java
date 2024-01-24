@@ -1,5 +1,6 @@
 package io.github.wirelesseye.humanity.gui;
 
+import io.github.wirelesseye.humanity.gui.human.HumanScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.registry.Registry;
 

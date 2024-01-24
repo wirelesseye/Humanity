@@ -2,9 +2,10 @@ package io.github.wirelesseye.humanity.entity.human;
 
 import io.github.wirelesseye.humanity.entity.ai.AllMemoryModuleTypes;
 import io.github.wirelesseye.humanity.entity.ai.sensor.AllSensorTypes;
-import io.github.wirelesseye.humanity.gui.HumanScreenHandler;
+import io.github.wirelesseye.humanity.gui.human.HumanScreenHandler;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
+import io.github.wirelesseye.humanity.entity.player.PlayerEntityTrait;
 import io.github.wirelesseye.humanity.util.NameGenerator;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.*;
@@ -44,6 +45,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.UUID;
 
 
 public class HumanEntity extends PassiveEntity implements InventoryOwner {
@@ -80,6 +82,8 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
     private static final NameGenerator nameGenerator = new NameGenerator();
     private String lastName;
     private static final TrackedData<Boolean> SLIM = DataTracker.registerData(HumanEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+
+    @Nullable private UUID leaderPlayerUuid;
 
     public HumanEntity(EntityType<? extends PassiveEntity> entityType, World world) {
         super(entityType, world);
@@ -118,6 +122,9 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
         this.hungerManager.writeNbt(nbt);
         nbt.putString("LastName", this.lastName);
         nbt.putBoolean("Slim", this.isSlim());
+        if (this.leaderPlayerUuid != null) {
+            nbt.putUuid("LeaderPlayer", this.leaderPlayerUuid);
+        }
     }
 
     @Override
@@ -128,6 +135,11 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
         this.hungerManager.readNbt(nbt);
         this.lastName = nbt.getString("LastName");
         this.setIsSlim(nbt.getBoolean("Slim"));
+        if (nbt.contains("LeaderPlayer")) {
+            this.leaderPlayerUuid = nbt.getUuid("LeaderPlayer");
+        } else {
+            this.leaderPlayerUuid = null;
+        }
     }
 
     public boolean isSlim() {
@@ -156,6 +168,28 @@ public class HumanEntity extends PassiveEntity implements InventoryOwner {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    @Nullable
+    public UUID getLeaderPlayerUuid() {
+        return this.leaderPlayerUuid;
+    }
+
+    public void setLeaderPlayerUuid(@Nullable UUID uuid) {
+        if (this.leaderPlayerUuid != null) {
+            PlayerEntity oldPlayer = this.world.getPlayerByUuid(this.leaderPlayerUuid);
+            if (oldPlayer != null) {
+                ((PlayerEntityTrait) oldPlayer).humanity$removePartyMember(this.leaderPlayerUuid);
+            }
+        }
+
+        if (uuid != null) {
+            PlayerEntity player = this.world.getPlayerByUuid(uuid);
+            if (player != null) {
+                ((PlayerEntityTrait) player).humanity$addPartyMember(this.getUuid());
+            }
+        }
+        this.leaderPlayerUuid = uuid;
     }
 
     @Override

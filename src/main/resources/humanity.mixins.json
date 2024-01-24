@@ -10,6 +10,7 @@
     "MemoryModuleTypeInvoker",
     "PiglinBrainMixin",
     "PiglinBruteBrainMixin",
+    "PlayerEntityMixin",
     "SensorTypeInvoker",
     "SlimeEntityMixin",
     "StatusEffectMixin"

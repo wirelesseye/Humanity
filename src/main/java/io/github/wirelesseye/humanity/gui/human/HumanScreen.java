@@ -1,4 +1,4 @@
-package io.github.wirelesseye.humanity.gui;
+package io.github.wirelesseye.humanity.gui.human;
 
 import io.github.cottonmc.cotton.gui.client.CottonInventoryScreen;
 import net.minecraft.entity.player.PlayerInventory;
