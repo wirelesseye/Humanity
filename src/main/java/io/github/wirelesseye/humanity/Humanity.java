@@ -1,5 +1,6 @@
 package io.github.wirelesseye.humanity;
 
+import io.github.wirelesseye.humanity.block.AllBlocks;
 import io.github.wirelesseye.humanity.entity.AllEntityTypes;
 import io.github.wirelesseye.humanity.gui.AllScreenHandlerTypes;
 import com.mojang.logging.LogUtils;
@@ -17,6 +18,7 @@ public class Humanity implements ModInitializer {
         AllEntityTypes.register();
         AllItems.register();
         AllScreenHandlerTypes.register();
+        AllBlocks.register();
         LOGGER.info("Humanity loaded");
     }
 }

@@ -6,6 +6,7 @@
   "mixins": [
     "ActiveTargetGoalMixin",
     "CreeperEntityAccessor",
+    "DoorBlockMixin",
     "HoglinBrainMixin",
     "MemoryModuleTypeInvoker",
     "PiglinBrainMixin",

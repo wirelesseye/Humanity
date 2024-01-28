@@ -1,8 +1,10 @@
 package io.github.wirelesseye.humanity.item;
 
 import io.github.wirelesseye.humanity.Humanity;
+import io.github.wirelesseye.humanity.block.AllBlocks;
 import io.github.wirelesseye.humanity.entity.AllEntityTypes;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.SpawnEggItem;
@@ -15,5 +17,6 @@ public class AllItems {
 
     public static void register() {
         Registry.register(Registry.ITEM, new Identifier(Humanity.ID, "human_spawn_egg"), HUMAN_SPAWN_EGG);
+        Registry.register(Registry.ITEM, new Identifier(Humanity.ID, "doorplate"), new DoorplateItem());
     }
 }

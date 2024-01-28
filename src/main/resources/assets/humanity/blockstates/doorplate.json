@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=north,open=false": { "model": "humanity:block/doorplate" },
+    "facing=north,open=true,hinge=left": { "model": "humanity:block/doorplate_open_left" },
+    "facing=north,open=true,hinge=right": { "model": "humanity:block/doorplate_open_right" },
+    "facing=east,open=false": { "model": "humanity:block/doorplate", "y": 90 },
+    "facing=east,open=true,hinge=left": { "model": "humanity:block/doorplate_open_left", "y": 90 },
+    "facing=east,open=true,hinge=right": { "model": "humanity:block/doorplate_open_right", "y": 90 },
+    "facing=south,open=false": { "model": "humanity:block/doorplate", "y": 180 },
+    "facing=south,open=true,hinge=left": { "model": "humanity:block/doorplate_open_left", "y": 180 },
+    "facing=south,open=true,hinge=right": { "model": "humanity:block/doorplate_open_right", "y": 180 },
+    "facing=west,open=false": { "model": "humanity:block/doorplate", "y": 270 },
+    "facing=west,open=true,hinge=left": { "model": "humanity:block/doorplate_open_left", "y": 270 },
+    "facing=west,open=true,hinge=right": { "model": "humanity:block/doorplate_open_right", "y": 270 }
+  }
+}
