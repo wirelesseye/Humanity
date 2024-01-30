@@ -4,7 +4,6 @@ import io.github.wirelesseye.humanity.Humanity;
 import io.github.wirelesseye.humanity.entity.activategrid.ActivateGridEntity;
 import io.github.wirelesseye.humanity.entity.human.HumanEntity;
 import io.github.wirelesseye.humanity.util.RegistryHelper;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.Identifier;
@@ -22,6 +21,6 @@ public class AllEntityTypes {
     );
 
     public static void register() {
-        FabricDefaultAttributeRegistry.register(HUMAN, HumanEntity.createHumanAttributes());
+        RegistryHelper.registerDefaultAttributes(HUMAN, HumanEntity.createHumanAttributes());
     }
 }
