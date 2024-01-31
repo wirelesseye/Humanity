@@ -1,8 +1,12 @@
-package io.github.wirelesseye.humanity.block;
+package io.github.wirelesseye.humanity.block.doorplate;
 
+import io.github.wirelesseye.humanity.block.AllBlockEntityTypes;
 import io.github.wirelesseye.humanity.util.VoxelShapeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.enums.DoorHinge;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
@@ -26,7 +30,7 @@ import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
 
-public class Doorplate extends Block {
+public class Doorplate extends BlockWithEntity {
     public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
     public static final BooleanProperty OPEN = Properties.OPEN;
     public static final EnumProperty<DoorHinge> HINGE = Properties.DOOR_HINGE;
@@ -155,5 +159,24 @@ public class Doorplate extends Block {
         }
 
         return ActionResult.PASS;
+    }
+
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
+    }
+
+    @Nullable
+    @Override
+    public DoorplateEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new DoorplateEntity(pos, state);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state,
+                                                                  BlockEntityType<T> type) {
+        return checkType(type, AllBlockEntityTypes.DOORPLATE_ENTITY,
+                (world1, pos, state1, blockEntity) -> DoorplateEntity.doTick(world, pos, state, blockEntity));
     }
 }

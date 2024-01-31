@@ -2,8 +2,8 @@ package io.github.wirelesseye.humanity;
 
 import io.github.wirelesseye.humanity.block.AllBlocks;
 import io.github.wirelesseye.humanity.entity.AllEntityTypes;
-import io.github.wirelesseye.humanity.entity.activategrid.ActivateGridEntityModel;
-import io.github.wirelesseye.humanity.entity.activategrid.ActivateGridEntityRenderer;
+import io.github.wirelesseye.humanity.entity.TileUpdateAnimEntityModel;
+import io.github.wirelesseye.humanity.entity.TileUpdateAnimRenderer;
 import io.github.wirelesseye.humanity.gui.AllScreenHandlerTypes;
 import io.github.wirelesseye.humanity.entity.human.HumanEntityRenderer;
 import io.github.wirelesseye.humanity.gui.human.HumanScreen;
@@ -23,8 +23,8 @@ public class HumanityClient implements ClientModInitializer {
     public void onInitializeClient() {
         EntityRendererRegistry.register(AllEntityTypes.HUMAN, HumanEntityRenderer::new);
         HandledScreens.register(AllScreenHandlerTypes.HUMAN, HumanScreen::new);
-        BlockRenderLayerMap.INSTANCE.putBlock(AllBlocks.DOORPLATE_BLOCK, RenderLayer.getTranslucent());
-        EntityRendererRegistry.register(AllEntityTypes.ACTIVATE_GRID, ActivateGridEntityRenderer::new);
-        EntityModelLayerRegistry.registerModelLayer(ACTIVE_GRID_LAYER, ActivateGridEntityModel::getTexturedModelData);
+        BlockRenderLayerMap.INSTANCE.putBlock(AllBlocks.DOORPLATE, RenderLayer.getTranslucent());
+        EntityRendererRegistry.register(AllEntityTypes.TILE_UPDATE_ANIM, TileUpdateAnimRenderer::new);
+        EntityModelLayerRegistry.registerModelLayer(ACTIVE_GRID_LAYER, TileUpdateAnimEntityModel::getTexturedModelData);
     }
 }

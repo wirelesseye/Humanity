@@ -1,4 +1,4 @@
-package io.github.wirelesseye.humanity.entity.activategrid;
+package io.github.wirelesseye.humanity.entity;
 
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
@@ -6,15 +6,15 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Quaternion;
 
-public class ActivateGridEntityModel extends EntityModel<ActivateGridEntity> {
+public class TileUpdateAnimEntityModel extends EntityModel<TileUpdateAnimEntity> {
     private final ModelPart root;
 
-    public ActivateGridEntityModel(ModelPart root) {
+    public TileUpdateAnimEntityModel(ModelPart root) {
         this.root = root;
     }
 
     @Override
-    public void setAngles(ActivateGridEntity entity, float limbAngle, float limbDistance, float animationProgress,
+    public void setAngles(TileUpdateAnimEntity entity, float limbAngle, float limbDistance, float animationProgress,
                           float headYaw, float headPitch) {}
 
     @Override

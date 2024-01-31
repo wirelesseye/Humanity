@@ -1,4 +1,4 @@
-package io.github.wirelesseye.humanity.entity.activategrid;
+package io.github.wirelesseye.humanity.entity;
 
 import io.github.wirelesseye.humanity.Humanity;
 import io.github.wirelesseye.humanity.HumanityClient;
@@ -10,23 +10,29 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 
-public class ActivateGridEntityRenderer extends EntityRenderer<ActivateGridEntity> {
-    private static final Identifier TEXTURE = new Identifier(Humanity.ID, "textures/entity/activate_grid.png");
-    private final ActivateGridEntityModel model;
+public class TileUpdateAnimRenderer extends EntityRenderer<TileUpdateAnimEntity> {
+    private static final Identifier TEXTURE = new Identifier(Humanity.ID, "textures/entity/tile_update_anim.png");
+    private final TileUpdateAnimEntityModel model;
 
-    public ActivateGridEntityRenderer(EntityRendererFactory.Context ctx) {
+    public TileUpdateAnimRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
-        this.model = new ActivateGridEntityModel(ctx.getPart(HumanityClient.ACTIVE_GRID_LAYER));
+        this.model = new TileUpdateAnimEntityModel(ctx.getPart(HumanityClient.ACTIVE_GRID_LAYER));
     }
 
     @Override
-    public Identifier getTexture(ActivateGridEntity entity) {
+    public Identifier getTexture(TileUpdateAnimEntity entity) {
         return TEXTURE;
     }
 
     @Override
-    public void render(ActivateGridEntity entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumerProvider, int light) {
+    protected int getBlockLight(TileUpdateAnimEntity entity, BlockPos pos) {
+        return 15;
+    }
+
+    @Override
+    public void render(TileUpdateAnimEntity entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumerProvider, int light) {
         float progress = entity.getAnimationProgress(tickDelta);
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(getRenderLayer(entity));
 
@@ -46,7 +52,7 @@ public class ActivateGridEntityRenderer extends EntityRenderer<ActivateGridEntit
         super.render(entity, yaw, tickDelta, matrices, vertexConsumerProvider, light);
     }
 
-    protected RenderLayer getRenderLayer(ActivateGridEntity entity) {
+    protected RenderLayer getRenderLayer(TileUpdateAnimEntity entity) {
         Identifier identifier = this.getTexture(entity);
         return RenderLayer.getEntityTranslucent(identifier);
     }

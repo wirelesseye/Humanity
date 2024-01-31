@@ -1,19 +1,18 @@
-package io.github.wirelesseye.humanity.entity.activategrid;
+package io.github.wirelesseye.humanity.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class ActivateGridEntity extends Entity {
+public class TileUpdateAnimEntity extends Entity {
     public static final int TICK_LENGTH = 20;
     public static final int TICK_STEP = 2;
     private int tickLeft = 22;
 
-    public ActivateGridEntity(EntityType<? extends Entity> type, World world) {
+    public TileUpdateAnimEntity(EntityType<? extends Entity> type, World world) {
         super(type, world);
     }
 
