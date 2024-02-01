@@ -18,7 +18,7 @@ public class TileUpdateAnimRenderer extends EntityRenderer<TileUpdateAnimEntity>
 
     public TileUpdateAnimRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
-        this.model = new TileUpdateAnimEntityModel(ctx.getPart(HumanityClient.ACTIVE_GRID_LAYER));
+        this.model = new TileUpdateAnimEntityModel(ctx.getPart(HumanityClient.TILE_UPDATE_ANIM_MODEL_LAYER));
     }
 
     @Override
@@ -32,7 +32,8 @@ public class TileUpdateAnimRenderer extends EntityRenderer<TileUpdateAnimEntity>
     }
 
     @Override
-    public void render(TileUpdateAnimEntity entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumerProvider, int light) {
+    public void render(TileUpdateAnimEntity entity, float yaw, float tickDelta, MatrixStack matrices,
+                       VertexConsumerProvider vertexConsumerProvider, int light) {
         float progress = entity.getAnimationProgress(tickDelta);
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(getRenderLayer(entity));
 

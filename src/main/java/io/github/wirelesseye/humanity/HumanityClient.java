@@ -17,7 +17,8 @@ import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.util.Identifier;
 
 public class HumanityClient implements ClientModInitializer {
-    public static final EntityModelLayer ACTIVE_GRID_LAYER = new EntityModelLayer(new Identifier(Humanity.ID, "active_grid"), "main");
+    public static final EntityModelLayer TILE_UPDATE_ANIM_MODEL_LAYER = new EntityModelLayer(
+            new Identifier(Humanity.ID, "tile_update_anim"), "main");
 
     @Override
     public void onInitializeClient() {
@@ -25,6 +26,6 @@ public class HumanityClient implements ClientModInitializer {
         HandledScreens.register(AllScreenHandlerTypes.HUMAN, HumanScreen::new);
         BlockRenderLayerMap.INSTANCE.putBlock(AllBlocks.DOORPLATE, RenderLayer.getTranslucent());
         EntityRendererRegistry.register(AllEntityTypes.TILE_UPDATE_ANIM, TileUpdateAnimRenderer::new);
-        EntityModelLayerRegistry.registerModelLayer(ACTIVE_GRID_LAYER, TileUpdateAnimEntityModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(TILE_UPDATE_ANIM_MODEL_LAYER, TileUpdateAnimEntityModel::getTexturedModelData);
     }
 }
